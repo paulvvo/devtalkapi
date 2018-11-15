@@ -46,4 +46,31 @@ router.post("/register", (req,res) =>{
 	})
 })
 
+
+router.post("/login", (req,res) =>{
+	const {email, password}  = req.body;
+
+	User.findOne({email:email})
+	.then(foundUser => {
+		if(!foundUser){
+			res.status(404).json({msg:'User Not Found'});
+		}
+
+		bcrypt.compare(password, foundUser.password)
+		.then(isMatch => {
+			if(isMatch){
+				res.json({msg: "Success"});
+			}else{
+				return res.status(400).json({msg: "Password Incorrect"});
+			}
+		})
+	})
+})
+
 module.exports = router;
+
+
+//when user logins, they get a token and using that token they can access protected routes
+//the token is validated using passport and passportjwt and extract user information from the token
+
+//login route actually returns a token
