@@ -22,7 +22,7 @@ app.use(bodyParser.json());
 app.use(passport.initialize());
 
 //Passport Config
-// require("./config/passport")(passport);
+require("./config/passport")(passport);
 
 //Routes
 app.use("/api/auths", authRoutes);
