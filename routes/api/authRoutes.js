@@ -10,10 +10,9 @@ const router = express.Router();
 const User = require("../../models/User");
 const key = require("../../config/keys").secretOrKey;
 
-router.get("/test", (req,res) => {
-	res.json({msg: "auth route working"})
-})
-
+//@route  GET api/auths/register
+//@desc   register user to database
+//@access public
 router.post("/register", (req,res) =>{
 	User.findOne({email:req.body.email})
 	.then((user) =>{
@@ -48,7 +47,9 @@ router.post("/register", (req,res) =>{
 	})
 })
 
-
+//@route  GET api/auths/login
+//@desc   return token
+//@access public
 router.post("/login", (req,res) =>{
 	const {email, password}  = req.body;
 
@@ -80,6 +81,10 @@ router.post("/login", (req,res) =>{
 	})
 })
 
+
+//@route  GET api/auths/current
+//@desc   returns current user
+//@access private
 router.get("/current", passport.authenticate('jwt', {session:false}), (req,res) => {
 	 res.json({msg: "Success"});
 });
