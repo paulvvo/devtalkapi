@@ -86,3 +86,5 @@ module.exports = router;
 //the token is validated using passport and passportjwt and extract user information from the token
 
 //login route actually returns a token
+//bearer token is a certain type of protocol
+//when you have the token, you take it and put it in the header for authorization
