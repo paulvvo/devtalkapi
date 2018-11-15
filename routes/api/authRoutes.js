@@ -1,6 +1,8 @@
 //used for signing up and loggin in, authentication routes
 const express = require("express");
 const gravatar = require("gravatar");
+const bcrypt = require("bcryptjs");
+
 const router = express.Router();
 
 const User = require("../../models/User");
@@ -25,8 +27,21 @@ router.post("/register", (req,res) =>{
 				name:req.body.name,
 				email: req.body.email,
 				password:req.body.password,
-				avatar: avatar 
+				avatar: avatar
 			})
+			bcrypt.genSalt(10, (err, salt) =>{
+				bcrypt.hash(newUser.password, salt, (err,hash)=>{
+					if(err) throw err;
+
+					newUser.password = hash;
+					newUser
+					.save()
+					.then(createdUser => res.json(createdUser))
+					.catch(err => console.log(err));
+				})
+			})
+
+
 		}
 	})
 })
