@@ -9,6 +9,7 @@ const router = express.Router();
 
 const User = require("../../models/User");
 const key = require("../../config/keys").secretOrKey;
+const validateRegisterInput = require("../../validation/register");
 
 //@route  GET api/auths/register
 //@desc   register user to database
