@@ -4,9 +4,9 @@ const bodyParser = require("body-parser");
 const passport = require("passport");
 
 //Routes
-const authRoutes = require("./routes/api/authRoutes");
-const postRoutes = require("./routes/api/postRoutes");
-const profileRoutes = require("./routes/api/profileRoutes");
+const authRoutes = require("./routes/api/auths");
+const postRoutes = require("./routes/api/posts");
+const profileRoutes = require("./routes/api/profiles");
 
 const db = require("./config/keys.js").mongoURI;
 mongoose
