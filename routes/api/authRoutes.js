@@ -15,10 +15,18 @@ const validateRegisterInput = require("../../validation/register");
 //@desc   register user to database
 //@access public
 router.post("/register", (req,res) =>{
+
+	const {errors, isValid} = validateRegisterInput(req.body);
+	if(!isValid){
+		res.status(400).json(errors)
+	}
+
 	User.findOne({email:req.body.email})
 	.then((user) =>{
 		if(user){
-			res.status(400).json({email:"User Already Exists"});
+			errors.name="User Already Exists";
+			res.status(400).json(errors);
+			// res.status(400).json({email:"User Already Exists"});
 		}else{
 			const avatar = gravatar.url(req.body.email, {
 				s: '200',//size
