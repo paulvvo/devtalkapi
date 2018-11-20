@@ -3,7 +3,7 @@ const Validator = require("validator");
 const isEmpty  = require("./isEmpty");
 
 const validateRegisterInput = (input) => {
-	let errors={};
+	const errors={};
 
 	//doing this because if user doesn't put in a name field,
 	//it doesn't send as a empty string, so we're going to
@@ -26,12 +26,9 @@ const validateRegisterInput = (input) => {
 	if(!Validator.isLength(input.password, {min:6, max:30})){
 		errors.password = "Password must be 6 to 30 characters";
 	}
-	if(! Validator.equals(input.password, input.password2)){
+	if(!Validator.equals(input.password, input.password2)){
 		errors.password2 = "Passwords Must Match";
 	}
-
-
-
 
 	if(Validator.isEmpty(input.name)){
 		errors.name = "Name is required";
@@ -45,11 +42,6 @@ const validateRegisterInput = (input) => {
 	if(Validator.isEmpty(input.password2)){
 		errors.password2 = "Confirmation Password is required";
 	}
-
-
-
-
-
 
 	return{
 		errors:errors,
