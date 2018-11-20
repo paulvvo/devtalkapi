@@ -61,11 +61,18 @@ router.post("/register", (req,res) =>{
 //@access public
 router.post("/login", (req,res) =>{
 	const {email, password}  = req.body;
+	const {errors, isValid} = validateLoginInput(req.body);
+
+	if(!isValid)
+		res.status(400).json(errors);
+
 
 	User.findOne({email:email})
 	.then(foundUser => {
 		if(!foundUser){
-			res.status(404).json({msg:'User Not Found'});
+			errors.email = "User does not exist";
+			res.status(404).json(errors);
+			// res.status(404).json({msg:'User Not Found'});
 		}
 
 		bcrypt.compare(password, foundUser.password)
@@ -84,7 +91,9 @@ router.post("/login", (req,res) =>{
 					})
 				})
 			}else{
-				return res.status(400).json({msg: "Password Incorrect"});
+				errors.password = "Password is incorrect";
+				return res.status(400).json(errors);
+				// return res.status(400).json({msg: "Password Incorrect"});
 			}
 		})
 	})
