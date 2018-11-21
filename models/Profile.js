@@ -33,6 +33,90 @@ const profileSchema = new mongoose.Schema({
 	},
 	githubusername:{
 		type:String
+	},
+	experience:[
+		{
+			title:{
+				type:String,
+				require:true
+			},
+			company:{
+				type:String,
+				required:true,
+			},
+			location:{
+				type:String
+			},
+			from:{
+				type:Date,
+				required:true
+			},
+			to:{
+				type:Date
+			},
+			current:{
+				type:Boolean,
+				default:false,
+			},
+			description:{
+				type:String
+			}
+		}
+	],
+	education:[
+		{
+			school:{
+				type:String,
+				require:true
+			},
+			degree:{
+				type:String,
+				required:true,
+			},
+			fieldofstudy:{
+				type:String
+			},
+			from:{
+				type:Date,
+				required:true
+			},
+			to:{
+				type:Date
+			},
+			current:{
+				type:Boolean,
+				default:false,
+			},
+			description:{
+				type:String
+			}
+
+		}
+	],
+	social:{
+		youtube:{
+			type:String,
+		},
+
+		twitter:{
+			type:String,
+		},
+
+		facebook:{
+			type:String,
+		},
+
+		linkedin:{
+			type:String,
+		},
+
+		instagram:{
+			type:String,
+		},
+	},
+	date:{
+		type:Date,
+		default:Data.now
 	}
 })
 
