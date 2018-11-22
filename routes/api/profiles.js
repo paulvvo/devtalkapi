@@ -32,7 +32,7 @@ router.get("/", passport.authenticate("jwt", {session:false}), (req,res)=>{
 })
 
 // @route 	POST api/profile
-// @desc 		create new user profile
+// @desc 		create new user profile and updates
 // @access	private
 
 router.post("/", passport.authenticate("jwt", {session:false}), (req,res)=>{
@@ -59,5 +59,33 @@ router.post("/", passport.authenticate("jwt", {session:false}), (req,res)=>{
 	if(req.body.linkedin) newProfile.social.linkedin = req.body.linkedin;
 	if(req.body.instagram) newProfile.social.instagram = req.body.instagram;
 
+
+	Profile.findOne({user:req.user.id})
+	.then(profile => {
+		if(profile){
+			//Update Profile
+			Profile.findOneAndUpdate(
+				{user:req.user.id},
+				{$set:newProfile},
+				{new:true}
+			)
+			.then(updatedProfile => res.json(updatedProfile))
+		}else{
+			//Check existing handle is present
+			Profile.findOne({handle:newProfile.handle})
+			.then(foundProfile => {
+				if(foundProfile){
+					errors.handle = "That Handle Already Exists";
+					res.status(400).json(errors);
+				}
+				//Creating New Profile
+				new Profile(newProfile).save()
+				.then(createdProfile => res.json(createdProfile));
+
+			})
+
+
+		}
+	})
 })
 module.exports = router;
