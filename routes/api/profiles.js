@@ -45,5 +45,19 @@ router.post("/", passport.authenticate("jwt", {session:false}), (req,res)=>{
 	if(req.body.bio) newProfile.bio = req.body.bio;
 	if(req.body.status) newProfile.status = req.body.status;
 	if(req.body.githubusername) newProfile.githubusername = req.body.githubusername;
+
+	//Skills  - Split into Array
+	if(typeof req.body.skills !== "undefined"){
+		newProfile.skills = req.body.skills.split(',');
+	}
+
+	//Socials
+	newProfile.social = {};
+	if(req.body.youtube) newProfile.social.youtube = req.body.youtube;
+	if(req.body.twitter) newProfile.social.twitter = req.body.twitter;
+	if(req.body.facebook) newProfile.social.facebook = req.body.facebook;
+	if(req.body.linkedin) newProfile.social.linkedin = req.body.linkedin;
+	if(req.body.instagram) newProfile.social.instagram = req.body.instagram;
+
 })
 module.exports = router;
