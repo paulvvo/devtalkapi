@@ -7,7 +7,7 @@ const router = express.Router();
 
 const Profile = require("../../models/Profile");
 const User = require("../../models/Profile");
-
+const validateProfileInput = require("../../validation/profile");
 
 router.get("/test", (req,res) => {
 	res.json({msg: "profile route working"})
@@ -36,6 +36,8 @@ router.get("/", passport.authenticate("jwt", {session:false}), (req,res)=>{
 // @access	private
 
 router.post("/", passport.authenticate("jwt", {session:false}), (req,res)=>{
+	const {errors,isValid} = validateProfileInput(req.body);
+
 	const newProfile = {};
 	newProfile.user = req.user.id;
 	if(req.body.handle) newProfile.handle = req.body.handle;
