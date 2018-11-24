@@ -6,7 +6,7 @@ const passport = require("passport");
 const router = express.Router();
 
 const Profile = require("../../models/Profile");
-const User = require("../../models/Profile");
+const User = require("../../models/User");
 const validateProfileInput = require("../../validation/profile");
 
 router.get("/test", (req,res) => {
@@ -25,23 +25,23 @@ router.get("/", passport.authenticate("jwt", {session:false}), (req,res)=>{
 		if(!foundProfile){
 			errors.profile="No Profile was found for this User";
 			res.status(404).json(errors);
-		}else res.json(foundProfile);
-
+		}else
+			res.json(foundProfile);
 	})
 	.catch(err => res.status(404).json(err));
-})
+});
 
 // @route 	POST api/profile
 // @desc 		create new user profile and updates
 // @access	private
 
 router.post("/", passport.authenticate("jwt", {session:false}), (req,res)=>{
+
 	const {errors,isValid} = validateProfileInput(req.body);
 
 	if(!isValid){
 		res.status(400).json(errors);
 	}
-
 	const newProfile = {};
 	newProfile.user = req.user.id;
 	if(req.body.handle) newProfile.handle = req.body.handle;
@@ -52,12 +52,12 @@ router.post("/", passport.authenticate("jwt", {session:false}), (req,res)=>{
 	if(req.body.status) newProfile.status = req.body.status;
 	if(req.body.githubusername) newProfile.githubusername = req.body.githubusername;
 
-	//Skills  - Split into Array
+	// Skills  - Split into Array
 	if(typeof req.body.skills !== "undefined"){
 		newProfile.skills = req.body.skills.split(',');
 	}
 
-	//Socials
+	// Socials
 	newProfile.social = {};
 	if(req.body.youtube) newProfile.social.youtube = req.body.youtube;
 	if(req.body.twitter) newProfile.social.twitter = req.body.twitter;
@@ -88,10 +88,11 @@ router.post("/", passport.authenticate("jwt", {session:false}), (req,res)=>{
 				new Profile(newProfile).save()
 				.then(createdProfile => res.json(createdProfile));
 
-			})
-
-
+			});
 		}
 	})
-})
+
+});
+
+
 module.exports = router;

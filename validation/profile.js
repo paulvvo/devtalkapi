@@ -14,6 +14,7 @@ const validateProfileInput = (input) => {
 	}
 	if(Validator.isEmpty(input.handle)){
 		errors.handle = "Handle Field Required";
+		console.log("hello");
 	}
 	if(Validator.isEmpty(input.status)){
 		errors.status = "Status Field Required";
