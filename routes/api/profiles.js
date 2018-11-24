@@ -38,6 +38,10 @@ router.get("/", passport.authenticate("jwt", {session:false}), (req,res)=>{
 router.post("/", passport.authenticate("jwt", {session:false}), (req,res)=>{
 	const {errors,isValid} = validateProfileInput(req.body);
 
+	if(!isValid){
+		res.status(400).json(errors);
+	}
+
 	const newProfile = {};
 	newProfile.user = req.user.id;
 	if(req.body.handle) newProfile.handle = req.body.handle;

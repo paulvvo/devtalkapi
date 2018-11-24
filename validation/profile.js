@@ -22,6 +22,37 @@ const validateProfileInput = (input) => {
 		errors.skills = "Skills Field  Required";
 	}
 
+	if(!isEmpty(input.website)){
+		if(!Validator.isURL(input.website)){
+			errors.website = "Not a Valid URL";
+		}
+	}
+	if(!isEmpty(input.youtube)){
+		if(!Validator.isURL(input.youtube)){
+			errors.youtube = "Not a Valid URL";
+		}
+	}
+	if(!isEmpty(input.twitter)){
+		if(!Validator.isURL(input.twitter)){
+			errors.twitter = "Not a Valid URL";
+		}
+	}
+	if(!isEmpty(input.facebook)){
+		if(!Validator.isURL(input.facebook)){
+			errors.facebook = "Not a Valid URL";
+		}
+	}
+	if(!isEmpty(input.linkedin)){
+		if(!Validator.isURL(input.linkedin)){
+			errors.linkedin = "Not a Valid URL";
+		}
+	}
+	if(!isEmpty(input.instagram)){
+		if(!Validator.isURL(input.instagram)){
+			errors.instagram = "Not a Valid URL";
+		}
+	}
+
 	return {
 		errors:errors,
 		isValid:isEmpty(errors)
