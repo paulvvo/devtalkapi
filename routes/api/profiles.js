@@ -32,6 +32,28 @@ router.get("/", passport.authenticate("jwt", {session:false}), (req,res)=>{
 	.catch(err => res.status(404).json(err));
 });
 
+
+// @route 	GET api/profile/handle/:handle
+// @desc 		get user profile by handle
+// @access	public
+
+router.get("/handle/:handle", (req,res) =>{
+	const errors = {};
+
+	Profile.findOne({handle:req.params.handle})
+	.then(foundProfile => {
+		if(!foundProfile){
+			errors.handle = "No Profile Found";
+			res.status(404).json(errors);
+		}else{
+			res.json(foundProfile);
+		}
+	})
+	.catch(err => res.json(err));
+})
+
+
+
 // @route 	POST api/profile
 // @desc 		create new user profile and updates
 // @access	private
