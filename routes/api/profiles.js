@@ -32,6 +32,24 @@ router.get("/", passport.authenticate("jwt", {session:false}), (req,res)=>{
 	.catch(err => res.status(404).json(err));
 });
 
+// @route 	GET api/profiles/all
+// @desc 		get all profiles
+// @access	public
+router.get("/all", (req,res) => {
+	const errors = {};
+	Profile.find()
+	.populate('user', ['name', 'avatar'])
+	.then(profiles => {
+		if(!profiles){
+			errors.allprofiles="There are no profiles."
+			res.status(404).json(errors);
+		}else{
+			res.json(profiles);
+		}
+	})
+	.catch(err => res.status(404).json(err));
+})
+
 
 // @route 	GET api/profiles/handle/:handle
 // @desc 		get user profile by handle
@@ -63,7 +81,7 @@ router.get("/user/:user_id", (req,res) => {
 	.populate('user', ['name', 'avatar'])
 	.then(foundProfile => {
 		if(!foundProfile){
-			errors.handle="Profile Does Not Exist";
+			errors.userid="Profile Does Not Exist";
 			res.status(404).json(errors);
 		}else{
 			res.json(foundProfile);
