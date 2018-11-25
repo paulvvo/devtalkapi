@@ -41,6 +41,7 @@ router.get("/handle/:handle", (req,res) =>{
 	const errors = {};
 
 	Profile.findOne({handle:req.params.handle})
+	.populate('user', ['name','avatar'])
 	.then(foundProfile => {
 		if(!foundProfile){
 			errors.handle = "No Profile Found";
