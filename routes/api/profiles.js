@@ -13,7 +13,7 @@ router.get("/test", (req,res) => {
 	res.json({msg: "profile route working"})
 })
 
-// @route 	GET api/profile
+// @route 	GET api/profiles
 // @desc 		gets current user's profile
 // @access	private
 
@@ -33,7 +33,7 @@ router.get("/", passport.authenticate("jwt", {session:false}), (req,res)=>{
 });
 
 
-// @route 	GET api/profile/handle/:handle
+// @route 	GET api/profiles/handle/:handle
 // @desc 		get user profile by handle
 // @access	public
 
@@ -53,9 +53,26 @@ router.get("/handle/:handle", (req,res) =>{
 	.catch(err => res.json(err));
 })
 
+//@route GET api/profiles/user/:user_id
+//@desc get profile by user id
+//@access public
+router.get("/user/:user_id", (req,res) => {
+	const errors = {};
 
+	Profile.findOne({user:req.params.user_id})
+	.populate('user', ['name', 'avatar'])
+	.then(foundProfile => {
+		if(!foundProfile){
+			errors.handle="Profile Does Not Exist";
+			res.status(404).json(errors);
+		}else{
+			res.json(foundProfile);
+		}
+	})
+	.catch(err => res.status(404).json("hello"));
+})
 
-// @route 	POST api/profile
+// @route 	POST api/profiles
 // @desc 		create new user profile and updates
 // @access	private
 
