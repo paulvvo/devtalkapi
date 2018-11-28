@@ -10,7 +10,7 @@ const profileRoutes = require("./routes/api/profiles");
 
 const db = require("./config/keys.js").mongoURI;
 mongoose
-.connect(db)
+.connect(db, {useNewUrlParser:true})
 .then(() => console.log("Connected"))
 .catch(console.log);
 
