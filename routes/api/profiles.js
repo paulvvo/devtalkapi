@@ -95,9 +95,7 @@ router.get("/user/:user_id", (req,res) => {
 // @access	private
 
 router.post("/", passport.authenticate("jwt", {session:false}), (req,res)=>{
-
 	const {errors,isValid} = validateProfileInput(req.body);
-
 	if(!isValid){
 		res.status(400).json(errors);
 	}
@@ -124,7 +122,6 @@ router.post("/", passport.authenticate("jwt", {session:false}), (req,res)=>{
 	if(req.body.linkedin) newProfile.social.linkedin = req.body.linkedin;
 	if(req.body.instagram) newProfile.social.instagram = req.body.instagram;
 
-
 	Profile.findOne({user:req.user.id})
 	.then(profile => {
 		if(profile){
@@ -142,16 +139,35 @@ router.post("/", passport.authenticate("jwt", {session:false}), (req,res)=>{
 				if(foundProfile){
 					errors.handle = "That Handle Already Exists";
 					res.status(400).json(errors);
+				}else{
+					//Creating New Profile
+					new Profile(newProfile).save()
+					.then(createdProfile => res.json(createdProfile));
 				}
-				//Creating New Profile
-				new Profile(newProfile).save()
-				.then(createdProfile => res.json(createdProfile));
-
 			});
 		}
 	})
-
 });
 
+// @route 	POST api/profiles/experience
+// @desc 		adding work experience onto profiles
+// @access	private
+
+router.post("/experience", passport.authenticate("jwt", {session:false}), (req,res) => {
+	Profile.findOne({user:req.user.id})
+	.then(foundProfile =>{
+		const newExperience = {
+			title:req.body.title,
+			company:req.body.company,
+			location:req.body.location,
+			from:req.body.from,
+			to:req.body.to,
+			current:req.body.current,
+			description:req.body.description,
+		}
+
+		
+	})
+})
 
 module.exports = router;
