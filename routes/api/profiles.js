@@ -176,6 +176,32 @@ router.post("/experience", passport.authenticate("jwt", {session:false}), (req,r
 		.then(savedProfile => res.json(savedProfile));
 
 	})
-})
+	.catch(err => res.status(400).json(err));
 
+});
+
+// @route 	POST api/profiles/education
+// @desc 		adding education to profile
+// @access	private
+
+router.post("/education", passport.authenticate("jwt", {session:false}), (req,res) =>{
+
+	Profile.findOne({user:req.user.id})
+	.then(foundProfile => {
+		const newEducation = {
+			school:req.body.school,
+			degree:req.body.degree,
+			fieldofstudy:req.body.fieldofstudy,
+			from:req.body.from,
+			to:req.body.to,
+			current:req.body.current,
+			description:req.body.description,
+		}
+
+		foundProfile.education.unshift(newEducation);
+		foundProfile.save()
+		.then(savedProfile => res.json(savedProfile));
+	})
+	.catch(err => res.json(err));
+})
 module.exports = router;
