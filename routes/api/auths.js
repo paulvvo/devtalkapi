@@ -11,6 +11,7 @@ const User = require("../../models/User");
 const key = require("../../config/keys").secretOrKey;
 const validateRegisterInput = require("../../validation/register");
 const validateLoginInput = require("../../validation/login");
+
 //@route  GET api/auths/register
 //@desc   register user to database
 //@access public
@@ -42,18 +43,18 @@ router.post("/register", (req,res) =>{
 			bcrypt.genSalt(10, (err, salt) =>{
 				bcrypt.hash(newUser.password, salt, (err,hash)=>{
 					if(err) throw err;
-
-					newUser.password = hash;
-					newUser
-					.save()
-					.then(createdUser => res.json(createdUser))
-					.catch(err => console.log(err));
+					else{
+						newUser.password = hash;
+						newUser
+						.save()
+						.then(createdUser => res.json(createdUser))
+						.catch(err => res.status(400).json(err));
+					}
 				})
 			})
-
-
 		}
 	})
+	.catch(err => res.status(400).json(err));
 })
 
 //@route  GET api/auths/login
@@ -117,7 +118,6 @@ router.get("/current", passport.authenticate('jwt', {session:false}), (req,res) 
 //@route  DELETE api/auths/current
 //@desc   delete current user
 //@access private
-
 router.delete("/current", passport.authenticate("jwt", {session:false}), (req,res) =>{
 	User.findOneAndRemove({_id:req.user.id})
 	.then(() => res.json({User:"User account has been deleted"}))

@@ -237,13 +237,12 @@ router.delete("/experience/:exp_id", passport.authenticate('jwt',{session:false}
 	Profile.findOne({user:req.user.id})
 	.then(foundProfile =>{
 		const deleteIndex = foundProfile.experience.map(item => item.id).indexOf(req.params.exp_id);
-		console.log(deleteIndex);
-
+		// console.log(deleteIndex);
 		if(deleteIndex !== -1){
 			foundProfile.experience.splice(deleteIndex, 1);
 			foundProfile.save().then(savedProfile => res.json(savedProfile));
 		}else{
-			res.status(404).json("Experience Profile was not found");
+			res.status(404).json({Experience:"Experience Profile was not found"});
 		}
 
 	})
@@ -255,10 +254,9 @@ router.delete("/experience/:exp_id", passport.authenticate('jwt',{session:false}
 // @desc 		deleting profile
 // @access	private
 router.delete("/", passport.authenticate("jwt", {session:false}), (req,res) =>{
-
 	Profile.findOneAndRemove({user:req.user.id})
 	.then(() => res.json({Delete: "Success"}))
-	.catch(err => res.status(400).json("Error with deleting profile"));
+	.catch(err => res.status(400).json({Profile:"Error with deleting profile"}));
 })
 
 
