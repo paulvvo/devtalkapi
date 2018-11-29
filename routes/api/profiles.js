@@ -208,7 +208,7 @@ router.post("/education", passport.authenticate("jwt", {session:false}), (req,re
 	.catch(err => res.status(400).json(err));
 })
 
-// @route 	DELETE api/profiles/experience/:exp_id
+// @route 	DELETE api/profiles/education/:edu_id
 // @desc 		deleting education from profile
 // @access	private
 
@@ -230,5 +230,24 @@ router.delete("/education/:edu_id", passport.authenticate('jwt', {session:false}
 	.catch(err => res.status(400).json("Error Deleting Education"));
 })
 
+// @route 	DELETE api/profiles/experience/:exp_id
+// @desc 		deleting experience from profile
+// @access	private
+router.delete("/experience/:exp_id", passport.authenticate('jwt',{session:false}), (req,res) => {
+	Profile.findOne({user:req.user.id})
+	.then(foundProfile =>{
+		const deleteIndex = foundProfile.experience.map(item => item.id).indexOf(req.params.exp_id);
+		console.log(deleteIndex);
+
+		if(deleteIndex !== -1){
+			foundProfile.experience.splice(deleteIndex, 1);
+			foundProfile.save().then(savedProfile => res.json(savedProfile));
+		}else{
+			res.status(404).json("Experience Profile was not found");
+		}
+
+	})
+	.catch(err => res.status(400).json("Error Deleting Experience"));
+})
 
 module.exports = router;
