@@ -8,6 +8,7 @@ const passport  = require("passport");
 const router = express.Router();
 
 const User = require("../../models/User");
+const Profile = require("../../models/Profile");
 const key = require("../../config/keys").secretOrKey;
 const validateRegisterInput = require("../../validation/register");
 const validateLoginInput = require("../../validation/login");
@@ -119,8 +120,13 @@ router.get("/current", passport.authenticate('jwt', {session:false}), (req,res) 
 //@desc   delete current user
 //@access private
 router.delete("/current", passport.authenticate("jwt", {session:false}), (req,res) =>{
+
 	User.findOneAndRemove({_id:req.user.id})
-	.then(() => res.json({User:"User account has been deleted"}))
+	.then(() => {
+		Profile.findOneAndRemove({user:req.user.id})
+		.then(() => res.json({User:"User account has been deleted"}))
+		.catch(err => res.status(400).json({Profile:"Profile Delete Error"}))
+	})
 	.catch(err => res.status(400).json({User:"User Account Delete Error"}));
 })
 
