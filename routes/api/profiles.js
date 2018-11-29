@@ -208,5 +208,27 @@ router.post("/education", passport.authenticate("jwt", {session:false}), (req,re
 	.catch(err => res.status(400).json(err));
 })
 
+// @route 	DELETE api/profiles/experience/:exp_id
+// @desc 		deleting education from profile
+// @access	private
+
+router.delete("/education/:edu_id", passport.authenticate('jwt', {session:false}), (req,res) =>{
+	Profile.findOne({user:req.user.id})
+	.then(foundProfile => {
+		const deleteIndex = foundProfile.education.map(item => item.id).indexOf(req.params.edu_id);
+		//this doesn't work because array of objects, not just the id
+		// const deleteIndex2 = foundProfile.education.indexOf(req.params.edu_id);
+
+		if(deleteIndex !== -1) {
+			foundProfile.education.splice(deleteIndex,1);
+			foundProfile.save().then(savedProfile => res.json(savedProfile));
+		}else{
+			res.status(404).json({Education:"Education profile was not found"});
+		}
+
+	})
+	.catch(err => res.status(400).json("Error Deleting Education"));
+})
+
 
 module.exports = router;
