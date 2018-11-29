@@ -250,4 +250,16 @@ router.delete("/experience/:exp_id", passport.authenticate('jwt',{session:false}
 	.catch(err => res.status(400).json("Error Deleting Experience"));
 })
 
+
+// @route 	DELETE api/profiles/
+// @desc 		deleting profile
+// @access	private
+router.delete("/", passport.authenticate("jwt", {session:false}), (req,res) =>{
+
+	Profile.findOneAndRemove({user:req.user.id})
+	.then(() => res.json({Delete: "Success"}))
+	.catch(err => res.status(400).json("Error with deleting profile"));
+})
+
+
 module.exports = router;
