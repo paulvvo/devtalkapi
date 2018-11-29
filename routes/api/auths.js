@@ -114,6 +114,19 @@ router.get("/current", passport.authenticate('jwt', {session:false}), (req,res) 
 	 })
 });
 
+//@route  DELETE api/auths/current
+//@desc   delete current user
+//@access private
+
+router.delete("/current", passport.authenticate("jwt", {session:false}), (req,res) =>{
+	User.findOneAndRemove({_id:req.user.id})
+	.then(() => res.json({User:"User account has been deleted"}))
+	.catch(err => res.status(400).json({User:"User Account Delete Error"}));
+})
+
+
+
+
 module.exports = router;
 
 
