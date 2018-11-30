@@ -4,11 +4,15 @@ const passport = require("passport");
 const router = express.Router();
 
 const Post = require("../../models/Post");
-
+const validatePostInput = require("../../validation/post");
 // @route		POST api/posts
 // @desc		create a new post
 // @access 	private
 router.post("/", passport.authenticate("jwt", {session:false}), (req,res) => {
+	const {errors, isValid} = validatePostInput(req.body);
+	if(!isValid) res.status(400).json(errors);
+
+
 	const newPost = new Post({
 		user:req.user.id,
 		name:req.body.name,
