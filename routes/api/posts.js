@@ -11,19 +11,20 @@ const validatePostInput = require("../../validation/post");
 router.post("/", passport.authenticate("jwt", {session:false}), (req,res) => {
 	const {errors, isValid} = validatePostInput(req.body);
 	if(!isValid) res.status(400).json(errors);
+	else{
+		const newPost = new Post({
+			user:req.user.id,
+			name:req.body.name,
+			text:req.body.text,
+			avatar:req.body.avatar,
+		})
+		newPost.save()
+		.then(createdPost => res.json(createdPost))
+		.catch(err => res.status(400).json(err));
 
 
-	const newPost = new Post({
-		user:req.user.id,
-		name:req.body.name,
-		text:req.body.text,
-		avatar:req.body.avatar,
-	})
-	newPost.save()
-	.then(createdPost => res.json(createdPost))
-	.catch(err => res.status(400).json(err));
+		// Post.create({})
+	}
 
-
-	// Post.create({})
 })
 module.exports=router;
