@@ -21,8 +21,6 @@ router.post("/", passport.authenticate("jwt", {session:false}), (req,res) => {
 		newPost.save()
 		.then(createdPost => res.json(createdPost))
 		.catch(err => res.status(400).json(err));
-
-
 		// Post.create({})
 	}
 
