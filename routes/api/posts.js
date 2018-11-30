@@ -4,6 +4,7 @@ const passport = require("passport");
 const router = express.Router();
 
 const Post = require("../../models/Post");
+const Profile = require("../../models/Profile");
 const validatePostInput = require("../../validation/post");
 
 // @route		GET api/posts
@@ -46,5 +47,34 @@ router.post("/", passport.authenticate("jwt", {session:false}), (req,res) => {
 		// Post.create({})
 	}
 });
+
+// @route		DELETE api/posts/:post_id
+// @desc		delete post by id
+// @access 	private
+router.delete("/:post_id", passport.authenticate("jwt", {session:false}), (req,res) =>{
+
+Profile.findOne({user:req.user.id})
+.then(foundProfile => {
+	Post.findById(req.params.post_id)
+	.then(foundPost => {
+		// console.log(typeof foundPost.user);
+		// console.log(typeof req.user.id)
+		// console.log(foundPost.user);
+		// console.log(req.user.id)
+
+		if(foundPost.user.toString() !== req.user.id)
+			return res.status(401).json({Post: "You Are Not Authorized To Delete This"})
+		else{
+			foundPost.remove()
+			.then(() => res.json({Post: "Post Deleted "}))
+		}
+	})
+	.catch(err => res.status(404).json("Post Not Found"))
+})
+.catch(err => res.status(400).json("Invalid"));
+
+
+});
+
 
 module.exports=router;
