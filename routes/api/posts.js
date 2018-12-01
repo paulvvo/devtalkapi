@@ -117,12 +117,23 @@ router.put("/unlike/:post_id", passport.authenticate("jwt", {session:false}), (r
 			if(filterArr.length ===0) {
 				return res.status(400).json({Unlike: "You Have Not Liked This Post Yet"});
 			}else {
-				const mapArr = foundPost.likes.map(likeItem =>{
-					// return likeItem.user
-				})
+
+
+				const mapArr = foundPost.likes.map(likeItem => likeItem.user.toString());
+				// console.log(mapArr);
+				const deleteIndex = mapArr.indexOf(req.user.id.toString());
+				// console.log(req.user.id);
+				// console.log(deleteIndex);
+				if(deleteIndex !== -1){
+					foundPost.likes.splice(deleteIndex, 1);
+					foundPost.save().then(savedPost => res.json(savedPost));
+				}else{
+					console.log("error");
+				}
+
 			}
 		})
-		.catch(err => res.status(404).json({Post:"Post Not Found"}));
+		.catch(err => res.status(404).json({Unlike:"Unlike Post Error"}));
 	})
 })
 
