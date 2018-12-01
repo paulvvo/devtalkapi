@@ -75,11 +75,10 @@ Profile.findOne({user:req.user.id})
 });
 
 
-// @route		POST api/posts/like/:post_id
+// @route		put api/posts/like/:post_id
 // @desc		like a post
 // @access 	private
-
-router.post("/like/:post_id", passport.authenticate("jwt", {session:false}), (req,res) => {
+router.put("/like/:post_id", passport.authenticate("jwt", {session:false}), (req,res) => {
 	Profile.findOne({user:req.user.id}).then(foundProfile => {
 		// console.log(foundProfile);
 		Post.findById(req.params.post_id)
@@ -95,6 +94,32 @@ router.post("/like/:post_id", passport.authenticate("jwt", {session:false}), (re
 			}else {
 				foundPost.likes.unshift({user:req.user.id});
 				foundPost.save().then(savedPost => res.json(savedPost));
+			}
+		})
+		.catch(err => res.status(404).json({Post:"Post Not Found"}));
+	})
+})
+
+// @route		PUT api/posts/unlike/:post_id
+// @desc		unlike a post
+// @access 	private
+router.put("/unlike/:post_id", passport.authenticate("jwt", {session:false}), (req,res) => {
+	Profile.findOne({user:req.user.id}).then(foundProfile => {
+		// console.log(foundProfile);
+		Post.findById(req.params.post_id)
+		.then(foundPost => {
+			const filterArr = foundPost.likes.filter(likeItem => {
+				return likeItem.user.toString() === req.user.id.toString()
+			})
+			// console.log(filterArr);
+			// console.log(typeof filterArr);
+			// console.log(filterArr.length);
+			if(filterArr.length ===0) {
+				return res.status(400).json({Unlike: "You Have Not Liked This Post Yet"});
+			}else {
+				const mapArr = foundPost.likes.map(likeItem =>{
+					// return likeItem.user
+				})
 			}
 		})
 		.catch(err => res.status(404).json({Post:"Post Not Found"}));
