@@ -6,6 +6,7 @@ const router = express.Router();
 const Post = require("../../models/Post");
 const Profile = require("../../models/Profile");
 const validatePostInput = require("../../validation/post");
+const validateCommentInput =  require("../../validation/comment");
 
 // @route		GET api/posts
 // @desc		get all posts
@@ -143,6 +144,9 @@ router.put("/unlike/:post_id", passport.authenticate("jwt", {session:false}), (r
 router.post("/comment/:post_id", passport.authenticate("jwt", {session:false}), (req,res) =>{
 	Post.findById(req.params.post_id)
 	.then(foundPost => {
+		const {errors, isValid} = validateCommentInput(req.body);
+		if(!isValid) return res.status(400).json(errors);
+
 		const newComment = {
 			user:req.user.id,
 			text:req.body.text,
