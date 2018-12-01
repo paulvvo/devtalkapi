@@ -72,9 +72,33 @@ Profile.findOne({user:req.user.id})
 	.catch(err => res.status(404).json("Post Not Found"))
 })
 .catch(err => res.status(400).json("Invalid"));
-
-
 });
 
+
+// @route		POST api/posts/like/:post_id
+// @desc		like a post
+// @access 	private
+
+router.post("/like/:post_id", passport.authenticate("jwt", {session:false}), (req,res) => {
+	Profile.findOne({user:req.user.id}).then(foundProfile => {
+		// console.log(foundProfile);
+		Post.findById(req.params.post_id)
+		.then(foundPost => {
+			const filterArr = foundPost.likes.filter(likeItem => {
+				return likeItem.user.toString() === req.user.id.toString()
+			})
+			// console.log(filterArr);
+			// console.log(typeof filterArr);
+			// console.log(filterArr.length);
+			if(filterArr.length >0) {
+				return res.status(400).json({Like: "You have already liked the post"});
+			}else {
+				foundPost.likes.unshift({user:req.user.id});
+				foundPost.save().then(savedPost => res.json(savedPost));
+			}
+		})
+		.catch(err => res.status(404).json({Post:"Post Not Found"}));
+	})
+})
 
 module.exports=router;
