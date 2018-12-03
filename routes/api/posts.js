@@ -159,6 +159,35 @@ router.post("/comment/:post_id", passport.authenticate("jwt", {session:false}), 
 	.catch(err => res.status(404).json({Post:"Post Not Found"}));
 })
 
+// @route		DELETE api/posts/comment/:post_id/:comment_id
+// @desc		delete comment from post
+// @access 	private
+router.delete("/comment/:post_id/:comment_id", passport.authenticate("jwt", {session:false}), (req,res) =>{
+	Post.findById(req.params.post_id)
+	.then(foundPost => {
+		//check if the comment exists
+		const filterArr = foundPost.comments.filter(comment => comment._id.toString() === req.params.comment_id.toString())
+		// console.log(filterArr);
+		if(filterArr.length === 0) return res.status(404).json({Comment:"Comment Does Not Exist"});
+		//should i check if the person deleting owns the comment????
+
+		//get delete index
+		else{
+			const mapArr = foundPost.comments.map(comment => comment._id.toString());
+			const deleteIndex = mapArr.indexOf(req.params.comment_id.toString());
+			// console.log(mapArr);
+			// console.log(deleteIndex);
+			if(deleteIndex > 0){
+				//delete comment
+				foundPost.comments.splice(deleteIndex,1);
+				//save post
+				foundPost.save().then(savedPost => res.json(savedPost));
+			}
+		}
+	})
+	.catch(err => res.status(400).json({Comment:"Delete Comment Error"}))
+})
+
 
 
 module.exports=router;
