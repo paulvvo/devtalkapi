@@ -13,7 +13,7 @@ const key = require("../../config/keys").secretOrKey;
 const validateRegisterInput = require("../../validation/register");
 const validateLoginInput = require("../../validation/login");
 
-//@route  GET api/auths/register
+//@route  POST api/auths/register
 //@desc   register user to database
 //@access public
 router.post("/register", (req,res) =>{
@@ -21,41 +21,43 @@ router.post("/register", (req,res) =>{
 	const {errors, isValid} = validateRegisterInput(req.body);
 	if(!isValid){
 		res.status(400).json(errors)
+	}else{
+		User.findOne({email:req.body.email})
+		.then((user) =>{
+			if(user){
+				errors.email="User Already Exists";
+				res.status(400).json(errors);
+				// res.status(400).json({email:"User Already Exists"});
+			}else{
+				const avatar = gravatar.url(req.body.email, {
+					s: '200',//size
+					r: 'pg',//rating
+					d: 'mm'//default
+				})
+				const newUser = new User({
+					name:req.body.name,
+					email: req.body.email,
+					password:req.body.password,
+					avatar: avatar
+				})
+				bcrypt.genSalt(10, (err, salt) =>{
+					bcrypt.hash(newUser.password, salt, (err,hash)=>{
+						if(err) throw err;
+						else{
+							newUser.password = hash;
+							newUser
+							.save()
+							.then(createdUser => res.json(createdUser))
+							.catch(err => res.status(400).json(err));
+						}
+					})
+				})
+			}
+		})
+		.catch(err => res.status(400).json(err));
 	}
 
-	User.findOne({email:req.body.email})
-	.then((user) =>{
-		if(user){
-			errors.email="User Already Exists";
-			res.status(400).json(errors);
-			// res.status(400).json({email:"User Already Exists"});
-		}else{
-			const avatar = gravatar.url(req.body.email, {
-				s: '200',//size
-				r: 'pg',//rating
-				d: 'mm'//default
-			})
-			const newUser = new User({
-				name:req.body.name,
-				email: req.body.email,
-				password:req.body.password,
-				avatar: avatar
-			})
-			bcrypt.genSalt(10, (err, salt) =>{
-				bcrypt.hash(newUser.password, salt, (err,hash)=>{
-					if(err) throw err;
-					else{
-						newUser.password = hash;
-						newUser
-						.save()
-						.then(createdUser => res.json(createdUser))
-						.catch(err => res.status(400).json(err));
-					}
-				})
-			})
-		}
-	})
-	.catch(err => res.status(400).json(err));
+
 })
 
 //@route  GET api/auths/login

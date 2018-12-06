@@ -4,7 +4,7 @@ const isEmpty  = require("./isEmpty");
 
 const validateRegisterInput = (input) => {
 	const errors={};
-
+	console.log(input);
 	//doing this because if user doesn't put in a name field,
 	//it doesn't send as a empty string, so we're going to
 	//manually set it as a empty string if the field is empty
@@ -16,9 +16,6 @@ const validateRegisterInput = (input) => {
 
 	if(!Validator.isLength(input.name, {min:2, max:30})){
 		errors.name = "Name must be between 2 and 30 characters";
-	}
-	if(Validator.isEmpty(input.name)){
-		errors.name = "Name is required";
 	}
 	if(!Validator.isEmail(input.email)){
 		errors.email = "Must Enter Valid Email";
