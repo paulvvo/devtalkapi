@@ -4,7 +4,7 @@ const isEmpty  = require("./isEmpty");
 
 const validateRegisterInput = (input) => {
 	const errors={};
-	console.log(input);
+	// console.log(input);
 	//doing this because if user doesn't put in a name field,
 	//it doesn't send as a empty string, so we're going to
 	//manually set it as a empty string if the field is empty
