@@ -69,38 +69,40 @@ router.post("/login", (req,res) =>{
 
 	if(!isValid)
 		res.status(400).json(errors);
-
-
-	User.findOne({email:email})
-	.then(foundUser => {
-		if(!foundUser){
-			errors.email = "User does not exist";
-			res.status(404).json(errors);
-			// res.status(404).json({msg:'User Not Found'});
-		}
-
-		bcrypt.compare(password, foundUser.password)
-		.then(isMatch => {
-			if(isMatch){
-				// res.json({msg: "Success"});
-				const payload = {
-					id: foundUser.id,
-					name: foundUser.name,
-					avatar: foundUser.avatar,
-				}
-				jwt.sign(payload, key, {expiresIn: 3600}, (err,token) => {
-					res.json({
-						success:true,
-						token: 'Bearer '+token,
-					})
-				})
-			}else{
-				errors.password = "Password is incorrect";
-				return res.status(400).json(errors);
-				// return res.status(400).json({msg: "Password Incorrect"});
+	else{
+		User.findOne({email:email})
+		.then(foundUser => {
+			if(!foundUser){
+				errors.email = "User does not exist";
+				res.status(404).json(errors);
+				// res.status(404).json({msg:'User Not Found'});
 			}
+
+			bcrypt.compare(password, foundUser.password)
+			.then(isMatch => {
+				if(isMatch){
+					// res.json({msg: "Success"});
+					const payload = {
+						id: foundUser.id,
+						name: foundUser.name,
+						avatar: foundUser.avatar,
+					}
+					jwt.sign(payload, key, {expiresIn: 3600}, (err,token) => {
+						res.json({
+							success:true,
+							token: 'Bearer '+token,
+						})
+					})
+				}else{
+					errors.password = "Password is incorrect";
+					return res.status(400).json(errors);
+					// return res.status(400).json({msg: "Password Incorrect"});
+				}
+			})
 		})
-	})
+	}
+
+
 })
 
 
