@@ -74,7 +74,7 @@ router.post("/login", (req,res) =>{
 		.then(foundUser => {
 			if(!foundUser){
 				errors.email = "User does not exist";
-				res.status(404).json(errors);
+				return res.status(404).json(errors);
 				// res.status(404).json({msg:'User Not Found'});
 			}
 
