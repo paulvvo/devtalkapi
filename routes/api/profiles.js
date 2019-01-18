@@ -89,7 +89,7 @@ router.get("/user/:user_id", (req,res) => {
 			res.json(foundProfile);
 		}
 	})
-	.catch(err => res.status(404).json("hello"));
+	.catch(err => res.status(404).json(err));
 })
 
 // @route 	POST api/profiles
@@ -99,7 +99,7 @@ router.get("/user/:user_id", (req,res) => {
 router.post("/", passport.authenticate("jwt", {session:false}), (req,res)=>{
 	const {errors,isValid} = validateProfileInput(req.body);
 	if(!isValid){
-		res.status(400).json(errors);
+		return res.status(400).json(errors);
 	}
 	const newProfile = {};
 	newProfile.user = req.user.id;
