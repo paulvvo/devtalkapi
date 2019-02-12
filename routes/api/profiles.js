@@ -187,7 +187,7 @@ router.post("/experience", passport.authenticate("jwt", {session:false}), (req,r
 
 router.post("/education", passport.authenticate("jwt", {session:false}), (req,res) =>{
 	const {isValid, errors} = validateEducationInput(req.body);
-	if(!isValid) res.status(400).json(errors);
+	if(!isValid) return res.status(400).json(errors);
 
 	Profile.findOne({user:req.user.id})
 	.then(foundProfile => {
